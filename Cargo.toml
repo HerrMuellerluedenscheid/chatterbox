@@ -3,6 +3,7 @@ name = "chatterbox"
 version = "1.0.0"
 edition = "2021"
 description = "streamlined text notifications via telegram, email and slack"
+license = "MIT"
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
