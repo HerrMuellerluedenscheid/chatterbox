@@ -93,8 +93,10 @@ mod tests {
     async fn test_dispatch_example() {
         use std;
 
-        let webhook_url = std::env::var("CHATTERBOX_SLACK_WEBHOOK_URL").expect("missing env var CHATTERBOX_SLACK_WEBHOOK_URL");
-        let channel = std::env::var("CHATTERBOX_SLACK_CHANNEL").expect("missing env var CHATTERBOX_SLACK_CHANNEL");
+        let webhook_url = std::env::var("CHATTERBOX_SLACK_WEBHOOK_URL")
+            .expect("missing env var CHATTERBOX_SLACK_WEBHOOK_URL");
+        let channel = std::env::var("CHATTERBOX_SLACK_CHANNEL")
+            .expect("missing env var CHATTERBOX_SLACK_CHANNEL");
 
         let test_message = Message::test_example();
         send_message(&webhook_url, &channel, test_message)
