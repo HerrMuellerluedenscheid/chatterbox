@@ -46,16 +46,15 @@ pub async fn send_message(
     channel: &str,
     message: Message<'_>,
 ) -> Result<(), slack_hook::Error> {
-    let slack = SlackHook::new(webhook_url).unwrap();
+    let slack = SlackHook::new(webhook_url)?;
     let p = PayloadBuilder::new()
         .text(message.markdown())
         .channel(channel)
         .username("Chatterbox")
         .icon_emoji(":varys:")
-        .build()
-        .unwrap();
+        .build()?;
 
-    slack.send(&p)
+    slack.send(&p).await
 }
 
 pub struct SlackHandler {

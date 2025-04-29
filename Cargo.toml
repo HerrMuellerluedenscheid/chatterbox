@@ -1,6 +1,6 @@
  [package]
 name = "chatterbox"
-version = "1.0.1"
+version = "1.0.2"
 edition = "2021"
 description = "streamlined text notifications via telegram, email and slack"
 license = "MIT"
@@ -8,17 +8,17 @@ repository = "https://github.com/HerrMuellerluedenscheid/chatterbox.git"
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0.91"
+serde_json = "1.0"
 tokio = {version = "1.21.2", features=["full"]}
-reqwest = { version = "0.11", features = ["blocking", "json"] }
-lettre = "0.10.0-beta.2"
-slack-hook = "0.8"
+reqwest = { version = "0.12", features = ["blocking", "json", "rustls-tls"] , default-features = false}
+lettre = { version = "0.11", features = ["rustls-tls", "smtp-transport", "builder"], default-features = false }
+slack-hook = { version = "0.9", default-features = false, features = ["rustls-tls"] }
 log = "0.4"
 chrono = { version = "0.4", features = ["serde"] }
 hostname = "0"
-lazy_static = "1.4.0"
-thiserror = "1.0.40"
-validator = { version="0.16.0", features = ["derive"] }
+lazy_static = "1.5"
+thiserror = "2"
+validator = { version="0.20", features = ["derive"] }
 
 [dev-dependencies]
 needs_env_var = "2.0.1"
