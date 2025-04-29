@@ -26,8 +26,7 @@ impl Example for Slack {
 
 impl Handler for Slack {
     fn check(&self) -> Result<(), DispatchError> {
-        self.validate()
-            .map_err(DispatchError::ValidationError)
+        self.validate().map_err(DispatchError::ValidationError)
     }
 
     fn start_handler(self, receiver: Receiver<String>) {
@@ -66,15 +65,11 @@ pub struct SlackHandler {
 
 impl SlackHandler {
     pub async fn start(&mut self) {
-        loop {
-            if let Ok(data) = self.receiver.recv().await {
-                let message = Message::from_json(&data);
-                send_message(&self.config.webhook_url, &self.config.channel, message)
-                    .await
-                    .expect("failed sending on slack");
-            } else {
-                break;
-            }
+        while let Ok(data) = self.receiver.recv().await {
+            let message = Message::from_json(&data);
+            send_message(&self.config.webhook_url, &self.config.channel, message)
+                .await
+                .expect("failed sending on slack");
         }
     }
 }
@@ -82,7 +77,6 @@ impl SlackHandler {
 #[cfg(test)]
 mod tests {
     use super::*;
-    
 
     #[test]
     fn test_example() {

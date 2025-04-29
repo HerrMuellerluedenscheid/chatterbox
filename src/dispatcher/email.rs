@@ -31,8 +31,7 @@ impl Example for Email {
 
 impl Handler for Email {
     fn check(&self) -> Result<(), DispatchError> {
-        self.validate()
-            .map_err(DispatchError::ValidationError)
+        self.validate().map_err(DispatchError::ValidationError)
     }
 
     fn start_handler(self, receiver: Receiver<String>) {
@@ -78,13 +77,9 @@ impl EmailHandler {
     }
 
     pub async fn start(&mut self) {
-        loop {
-            if let Ok(data) = self.receiver.recv().await {
-                let message = Message::from_json(&data);
-                self.send(message).await;
-            } else {
-                break;
-            }
+        while let Ok(data) = self.receiver.recv().await {
+            let message = Message::from_json(&data);
+            self.send(message).await;
         }
     }
 }

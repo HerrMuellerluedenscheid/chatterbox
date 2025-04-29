@@ -77,15 +77,11 @@ pub struct TelegramHandler {
 
 impl TelegramHandler {
     pub async fn start(&mut self) {
-        loop {
-            if let Ok(data) = self.receiver.recv().await {
-                let message = Message::from_json(&data);
-                send_message(&self.config.bot_token, &self.config.chat_id, message)
-                    .await
-                    .expect("failed sending message");
-            } else {
-                break;
-            }
+        while let Ok(data) = self.receiver.recv().await {
+            let message = Message::from_json(&data);
+            send_message(&self.config.bot_token, &self.config.chat_id, message)
+                .await
+                .expect("failed sending message");
         }
     }
 }
@@ -93,7 +89,7 @@ impl TelegramHandler {
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     use std;
 
     #[test]
@@ -110,15 +106,5 @@ mod tests {
         send_message(&bot_token, &chat_id, test_message)
             .await
             .unwrap();
-    }
-
-    #[tokio::test]
-    async fn test_status() {
-        use std;
-
-        let bot_token = std::env::var("CHATTERBOX_TELEGRAM_BOT_TOKEN").unwrap_or_default();
-        let chat_id = std::env::var("CHATTERBOX_TELEGRAM_CHAT_ID").unwrap_or_default();
-
-        let test_message = Message::test_example();
     }
 }
