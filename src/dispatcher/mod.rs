@@ -36,13 +36,13 @@ macro_rules! setup_handler {
 #[derive(Debug, PartialEq, Serialize, Deserialize, Default, Clone)]
 pub struct Sender {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub(crate) telegram: Option<Telegram>,
+    pub telegram: Option<Telegram>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub(crate) email: Option<Email>,
+    pub email: Option<Email>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub(crate) slack: Option<Slack>,
+    pub slack: Option<Slack>,
 }
 
 impl Example for Sender {

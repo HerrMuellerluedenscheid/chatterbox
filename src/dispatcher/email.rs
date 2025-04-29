@@ -32,7 +32,7 @@ impl Example for Email {
 impl Handler for Email {
     fn check(&self) -> Result<(), DispatchError> {
         self.validate()
-            .map_err(|e| DispatchError::ValidationError(e))
+            .map_err(DispatchError::ValidationError)
     }
 
     fn start_handler(self, receiver: Receiver<String>) {
@@ -66,7 +66,7 @@ impl EmailHandler {
 
         let credentials = Credentials::new(config.smtp_user.clone(), config.smtp_password.clone());
 
-        let mailer = SmtpTransport::relay(&*config.smtp_server)
+        let mailer = SmtpTransport::relay(&config.smtp_server)
             .unwrap()
             .credentials(credentials)
             .build();

@@ -27,7 +27,7 @@ impl Example for Slack {
 impl Handler for Slack {
     fn check(&self) -> Result<(), DispatchError> {
         self.validate()
-            .map_err(|e| DispatchError::ValidationError(e))
+            .map_err(DispatchError::ValidationError)
     }
 
     fn start_handler(self, receiver: Receiver<String>) {
@@ -82,7 +82,7 @@ impl SlackHandler {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use needs_env_var::*;
+    
 
     #[test]
     fn test_example() {

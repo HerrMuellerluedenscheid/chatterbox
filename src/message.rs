@@ -1,9 +1,10 @@
 use crate::dispatcher::Sender;
 use chrono::{DateTime, Utc};
 use lazy_static::lazy_static;
-use log::{debug, warn};
+use log::debug;
 use serde::{Deserialize, Serialize};
 use tokio::sync::broadcast;
+use tokio::sync::broadcast::error::SendError;
 
 lazy_static! {
     static ref HOSTNAME: String = hostname::get().unwrap().to_str().unwrap().to_string();
@@ -33,7 +34,7 @@ impl<'a> Message<'a> {
     }
 
     pub(crate) fn from_json(data: &'a str) -> Self {
-        serde_json::from_str(&data).expect("failed json message")
+        serde_json::from_str(data).expect("failed json message")
     }
 
     pub(crate) fn html(&self) -> String {
@@ -81,17 +82,23 @@ impl Dispatcher {
         Self { tx }
     }
 
-    pub fn dispatch<T: Notification>(&self, notification: &T) {
+    pub async fn dispatch<T: Notification>(
+        &self,
+        notification: &T,
+    ) -> Result<(), SendError<String>> {
+        if self.tx.receiver_count() == 0 {
+            debug!("no receivers connected");
+            return Ok(());
+        }
         debug!("dispatching message");
         let message = notification.message();
-        if let Some(error) = self.tx.send(message.as_json()).err() {
-            warn!("Failed sending message. Reason: {}", error);
-        }
+        self.tx.send(message.as_json())?;
+        Ok(())
     }
 
-    pub fn send_test_message(&self) {
+    pub async fn send_test_message(&self) -> Result<(), SendError<String>> {
         let message = Message::test_example();
-        self.dispatch(&message);
+        self.dispatch(&message).await
     }
 
     pub fn stop(self) {

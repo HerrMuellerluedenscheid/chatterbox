@@ -93,7 +93,7 @@ impl TelegramHandler {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use needs_env_var::*;
+    
     use std;
 
     #[test]
