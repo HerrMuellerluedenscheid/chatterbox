@@ -1,13 +1,8 @@
 use crate::dispatcher::Sender;
-use lazy_static::lazy_static;
 use log::debug;
 use serde::{Deserialize, Serialize};
 use tokio::sync::broadcast;
 use tokio::sync::broadcast::error::SendError;
-
-lazy_static! {
-    static ref HOSTNAME: String = hostname::get().unwrap().to_str().unwrap().to_string();
-}
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Message {
