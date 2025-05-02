@@ -1,5 +1,4 @@
 use crate::dispatcher::Sender;
-use chrono::{DateTime, Utc};
 use lazy_static::lazy_static;
 use log::debug;
 use serde::{Deserialize, Serialize};
@@ -11,57 +10,41 @@ lazy_static! {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct Message<'a> {
-    pub hostname: &'a str,
-    pub title: &'a str,
-    pub content: String,
-    pub timestamp: DateTime<Utc>,
+pub struct Message {
+    pub title: String,
+    pub body: String,
 }
 
-impl<'a> Message<'a> {
-    pub fn new_now(title: &'a str, content: String) -> Self {
-        let timestamp = Utc::now();
-        Message {
-            hostname: &HOSTNAME,
-            title,
-            content,
-            timestamp,
-        }
+impl Message {
+    pub fn new(title: String, body: String) -> Self {
+        Message { title, body }
     }
 
     pub(crate) fn as_json(&self) -> String {
         serde_json::to_string(&self).unwrap()
     }
 
-    pub(crate) fn from_json(data: &'a str) -> Self {
-        serde_json::from_str(data).expect("failed json message")
+    pub(crate) fn from_json(data: String) -> Self {
+        serde_json::from_str(&data).expect("failed json message")
     }
 
     pub(crate) fn html(&self) -> String {
-        format!(
-            "<b>{}</b>\nhost: {}\n{}\n{}",
-            self.title, self.hostname, self.content, self.timestamp
-        )
+        format!("<b>{}</b>{}", self.title, self.body)
     }
 
     pub(crate) fn markdown(&self) -> String {
-        format!(
-            "*{}*\nhost: {}\n{}\n{}",
-            self.title, self.hostname, self.content, self.timestamp
-        )
+        format!("#{}\n{}\n", self.title, self.body)
     }
 
     pub(crate) fn test_example() -> Self {
         Self {
-            hostname: &HOSTNAME,
-            title: "Test Message",
-            content: "This message was sent to test connectivity".to_string(),
-            timestamp: Utc::now(),
+            title: "Test Message".to_string(),
+            body: "This message was sent to test connectivity".to_string(),
         }
     }
 }
 
-impl Notification for Message<'_> {
+impl Notification for Message {
     fn message(&self) -> Message {
         self.clone()
     }

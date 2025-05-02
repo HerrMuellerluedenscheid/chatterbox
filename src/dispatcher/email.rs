@@ -53,13 +53,13 @@ pub struct EmailHandler {
 
 impl EmailHandler {
     /// Dispatch an email
-    async fn send(&self, message: Message<'_>) {
+    async fn send(&self, message: Message) {
         let config = &self.config;
         let email = LettreMessage::builder()
             .from("Chatterbox <noreply@intrusion.detection>".parse().unwrap())
             .reply_to("noreply@intrusion.detection".parse().unwrap())
             .to(config.receiver_address.parse().unwrap())
-            .subject("Intrusion Detected")
+            .subject(message.body.clone())
             .body(message.html())
             .unwrap();
 
@@ -78,7 +78,7 @@ impl EmailHandler {
 
     pub async fn start(&mut self) {
         while let Ok(data) = self.receiver.recv().await {
-            let message = Message::from_json(&data);
+            let message = Message::from_json(data);
             self.send(message).await;
         }
     }

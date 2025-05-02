@@ -37,7 +37,7 @@ impl Handler for Telegram {
 async fn send_message(
     bot_token: &str,
     chat_id: &str,
-    message: Message<'_>,
+    message: Message,
 ) -> Result<(), reqwest::Error> {
     let url = format!("https://api.telegram.org/bot{}/sendMessage", bot_token);
     let text = message.html();
@@ -78,7 +78,7 @@ pub struct TelegramHandler {
 impl TelegramHandler {
     pub async fn start(&mut self) {
         while let Ok(data) = self.receiver.recv().await {
-            let message = Message::from_json(&data);
+            let message = Message::from_json(data);
             send_message(&self.config.bot_token, &self.config.chat_id, message)
                 .await
                 .expect("failed sending message");

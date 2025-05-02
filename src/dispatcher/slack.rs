@@ -44,14 +44,13 @@ impl Handler for Slack {
 pub async fn send_message(
     webhook_url: &str,
     channel: &str,
-    message: Message<'_>,
+    message: Message,
 ) -> Result<(), slack_hook::Error> {
     let slack = SlackHook::new(webhook_url)?;
     let p = PayloadBuilder::new()
         .text(message.markdown())
         .channel(channel)
         .username("Chatterbox")
-        .icon_emoji(":varys:")
         .build()?;
 
     slack.send(&p).await
@@ -65,7 +64,7 @@ pub struct SlackHandler {
 impl SlackHandler {
     pub async fn start(&mut self) {
         while let Ok(data) = self.receiver.recv().await {
-            let message = Message::from_json(&data);
+            let message = Message::from_json(data);
             send_message(&self.config.webhook_url, &self.config.channel, message)
                 .await
                 .expect("failed sending on slack");
