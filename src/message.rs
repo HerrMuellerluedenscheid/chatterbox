@@ -60,10 +60,7 @@ impl Dispatcher {
         Self { tx }
     }
 
-    pub async fn dispatch<T: Notification>(
-        &self,
-        notification: &T,
-    ) -> Result<(), SendError<String>> {
+    pub fn dispatch<T: Notification>(&self, notification: &T) -> Result<(), SendError<String>> {
         if self.tx.receiver_count() == 0 {
             debug!("no receivers connected");
             return Ok(());
@@ -74,9 +71,9 @@ impl Dispatcher {
         Ok(())
     }
 
-    pub async fn send_test_message(&self) -> Result<(), SendError<String>> {
+    pub fn send_test_message(&self) -> Result<(), SendError<String>> {
         let message = Message::test_example();
-        self.dispatch(&message).await
+        self.dispatch(&message)
     }
 
     pub fn stop(self) {
