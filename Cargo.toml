@@ -18,4 +18,4 @@ thiserror = "2"
 validator = { version="0.20", features = ["derive"] }
 
 [dev-dependencies]
-needs_env_var = "2.0.1"
+needs_env_var = "1.1.0"
