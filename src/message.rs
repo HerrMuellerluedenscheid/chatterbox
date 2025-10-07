@@ -24,7 +24,7 @@ impl Message {
     }
 
     pub(crate) fn html(&self) -> String {
-        format!("<b>{}</b>{}", self.title, self.body)
+        format!("<b>{}</b><br>{}", self.title, self.body)
     }
 
     pub(crate) fn markdown(&self) -> String {
