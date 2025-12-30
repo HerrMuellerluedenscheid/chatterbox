@@ -1,4 +1,4 @@
 Chatterbox
 ==========
 
-Streamlined notifications via telegram, email, and slack.
+Streamlined notifications via telegram, email, slack and discord.

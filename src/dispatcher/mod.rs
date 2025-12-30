@@ -1,7 +1,9 @@
+pub mod discord;
 pub mod email;
 pub mod slack;
 pub mod telegram;
 
+use discord::Discord;
 use email::Email;
 use slack::Slack;
 use telegram::Telegram;
@@ -43,6 +45,9 @@ pub struct Sender {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub slack: Option<Slack>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub discord: Option<Discord>,
 }
 
 impl Example for Sender {
@@ -51,6 +56,7 @@ impl Example for Sender {
             telegram: Some(Telegram::example()),
             email: Some(Email::example()),
             slack: Some(Slack::example()),
+            discord: Some(Discord::example()),
         }
     }
 }
@@ -60,6 +66,7 @@ impl Sender {
         setup_handler!(self.telegram, tx);
         setup_handler!(self.email, tx);
         setup_handler!(self.slack, tx);
+        setup_handler!(self.discord, tx);
         Ok(())
     }
 }
