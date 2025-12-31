@@ -88,9 +88,8 @@ mod tests {
 
     #[tokio::test]
     async fn test_dispatch_example() {
-        let bot_token = std::env::var("CHATTERBOX_DISCORD_BOT_TOKEN").unwrap_or_default();
-        let channel_id = std::env::var("CHATTERBOX_DISCORD_CHANNEL_ID").unwrap_or_default();
-
+        let bot_token = std::env::var("CHATTERBOX_DISCORD_BOT_TOKEN").unwrap();
+        let channel_id = std::env::var("CHATTERBOX_DISCORD_CHANNEL_ID").unwrap();
         let test_message = Message::test_example();
         send_message(&bot_token, &channel_id, test_message)
             .await
