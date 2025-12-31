@@ -12,16 +12,15 @@ env:
   CHATTERBOX_SLACK_CHANNEL: ${{ secrets.CHATTERBOX_SLACK_CHANNEL }}
   CHATTERBOX_TELEGRAM_BOT_TOKEN: ${{ secrets.CHATTERBOX_TELEGRAM_BOT_TOKEN }}
   CHATTERBOX_TELEGRAM_CHAT_ID: ${{ secrets.CHATTERBOX_TELEGRAM_CHAT_ID }}
+  CHATTERBOX_DISCORD_BOT_TOKEN: ${{ secrets.CHATTERBOX_DISCORD_BOT_TOKEN }}
+  CHATTERBOX_DISCORD_CHANNEL_ID: ${{ secrets.CHATTERBOX_DISCORD_CHANNEL_ID }}
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
-    - name: Build
-      run: cargo build --verbose
     - name: cargo fmt
       run: cargo fmt --check
     - name: cargo clippy
