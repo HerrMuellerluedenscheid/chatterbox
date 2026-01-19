@@ -2,11 +2,13 @@ pub mod discord;
 pub mod email;
 pub mod slack;
 pub mod telegram;
+pub mod gotify;
 
 use discord::Discord;
 use email::Email;
 use slack::Slack;
 use telegram::Telegram;
+use gotify::Gotify;
 
 use log::debug;
 use serde::{Deserialize, Serialize};
@@ -48,6 +50,9 @@ pub struct Sender {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub discord: Option<Discord>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub gotify: Option<Gotify>,
 }
 
 impl Example for Sender {
@@ -57,6 +62,7 @@ impl Example for Sender {
             email: Some(Email::example()),
             slack: Some(Slack::example()),
             discord: Some(Discord::example()),
+            gotify: Some(Gotify::example()),
         }
     }
 }
@@ -67,6 +73,7 @@ impl Sender {
         setup_handler!(self.email, tx);
         setup_handler!(self.slack, tx);
         setup_handler!(self.discord, tx);
+        setup_handler!(self.gotify, tx);
         Ok(())
     }
 }
