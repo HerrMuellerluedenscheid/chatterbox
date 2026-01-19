@@ -10,14 +10,14 @@ use log::debug;
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
 pub struct Telegram {
     pub bot_token: String,
-    pub chat_id: String,
+    pub chat_id: u64,
 }
 
 impl Example for Telegram {
     fn example() -> Self {
         Telegram {
             bot_token: "92349823049:DFIPJEXAMPLE-EXAMPLE123d-EXAMPLE".to_string(),
-            chat_id: "1234567890".to_string(),
+            chat_id: 1234567890,
         }
     }
 }
@@ -36,15 +36,15 @@ impl Handler for Telegram {
 
 async fn send_message(
     bot_token: &str,
-    chat_id: &str,
+    chat_id: &u64,
     message: Message,
 ) -> Result<(), reqwest::Error> {
     let url = format!("https://api.telegram.org/bot{}/sendMessage", bot_token);
     let text = message.html();
     let mut params: HashMap<&str, &str> = HashMap::new();
-
+    let chat_id = chat_id.to_string();
     params.insert("text", &text);
-    params.insert("chat_id", chat_id);
+    params.insert("chat_id", &chat_id);
     params.insert("parse_mode", "html");
 
     let mut headers = HeaderMap::new();
@@ -101,7 +101,7 @@ mod tests {
     async fn test_dispatch_example() {
         let bot_token = std::env::var("CHATTERBOX_TELEGRAM_BOT_TOKEN").unwrap_or_default();
         let chat_id = std::env::var("CHATTERBOX_TELEGRAM_CHAT_ID").unwrap_or_default();
-
+        let chat_id = chat_id.parse::<u64>().unwrap();
         let test_message = Message::test_example();
         send_message(&bot_token, &chat_id, test_message)
             .await
