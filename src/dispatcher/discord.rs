@@ -8,14 +8,14 @@ use crate::message::Message;
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
 pub struct Discord {
     pub bot_token: String,
-    pub channel_id: String,
+    pub channel_id: u64,
 }
 
 impl Example for Discord {
     fn example() -> Self {
         Discord {
             bot_token: "92349823049:DFIPJEXAMPLE-EXAMPLE123d-EXAMPLE".to_string(),
-            channel_id: "1234567890".to_string(),
+            channel_id: 1234567890,
         }
     }
 }
@@ -34,7 +34,7 @@ impl Handler for Discord {
 
 async fn send_message(
     bot_token: &str,
-    channel_id: &str,
+    channel_id: &u64,
     message: Message,
 ) -> Result<(), reqwest::Error> {
     let client = reqwest::Client::new();
@@ -90,6 +90,7 @@ mod tests {
     async fn test_dispatch_example() {
         let bot_token = std::env::var("CHATTERBOX_DISCORD_BOT_TOKEN").unwrap();
         let channel_id = std::env::var("CHATTERBOX_DISCORD_CHANNEL_ID").unwrap();
+        let channel_id = channel_id.parse::<u64>().unwrap();
         let test_message = Message::test_example();
         send_message(&bot_token, &channel_id, test_message)
             .await
