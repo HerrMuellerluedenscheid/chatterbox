@@ -74,7 +74,6 @@ impl Handler for Email {
 #[allow(clippy::too_many_arguments)]
 pub async fn send_message(
     smtp_server: &str,
-    smtp_port: u16,
     smtp_user: &str,
     smtp_password: &str,
     sender_address: &str,
@@ -108,7 +107,6 @@ pub async fn send_message(
 
     let mailer = SmtpTransport::starttls_relay(smtp_server)
         .unwrap()
-        .port(smtp_port)
         .credentials(credentials)
         .build();
     mailer.send(&email)?;
@@ -127,7 +125,6 @@ impl EmailHandler {
             let message = Message::from_json(data);
             send_message(
                 &self.config.smtp_server,
-                self.config.smtp_port,
                 &self.config.smtp_user,
                 &self.config.smtp_password,
                 &self.config.sender_address,
@@ -156,10 +153,6 @@ mod tests {
 
         let smtp_server = std::env::var("CHATTERBOX_SMTP_SERVER")
             .expect("missing env var CHATTERBOX_SMTP_SERVER");
-        let smtp_port = std::env::var("CHATTERBOX_SMTP_PORT")
-            .unwrap_or_else(|_| "587".to_string())
-            .parse()
-            .expect("invalid SMTP port");
         let smtp_user =
             std::env::var("CHATTERBOX_SMTP_USER").expect("missing env var CHATTERBOX_SMTP_USER");
         let smtp_password = std::env::var("CHATTERBOX_SMTP_PASSWORD")
@@ -172,7 +165,6 @@ mod tests {
         let test_message = Message::test_example();
         send_message(
             &smtp_server,
-            smtp_port,
             &smtp_user,
             &smtp_password,
             &sender_address,
