@@ -1,14 +1,14 @@
 pub mod discord;
 pub mod email;
+pub mod gotify;
 pub mod slack;
 pub mod telegram;
-pub mod gotify;
 
 use discord::Discord;
 use email::Email;
+use gotify::Gotify;
 use slack::Slack;
 use telegram::Telegram;
-use gotify::Gotify;
 
 use log::debug;
 use serde::{Deserialize, Serialize};

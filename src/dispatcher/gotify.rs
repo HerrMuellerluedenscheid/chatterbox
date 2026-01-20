@@ -1,8 +1,8 @@
-use std::str::FromStr;
-use reqwest::Url;
 use crate::dispatcher::{DispatchError, Example, Handler};
 use crate::message::Message;
+use reqwest::Url;
 use serde::{Deserialize, Serialize};
+use std::str::FromStr;
 use tokio::sync::broadcast::Receiver;
 use validator::Validate;
 
@@ -90,9 +90,13 @@ impl GotifyHandler {
     pub async fn start(&mut self) {
         while let Ok(data) = self.receiver.recv().await {
             let message = Message::from_json(data);
-            send_message((&self.config.server_url).as_ref(), &self.config.app_token, message)
-                .await
-                .expect("failed sending to Gotify");
+            send_message(
+                self.config.server_url.as_ref(),
+                &self.config.app_token,
+                message,
+            )
+            .await
+            .expect("failed sending to Gotify");
         }
     }
 }
