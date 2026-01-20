@@ -20,7 +20,6 @@ pub struct Email {
     #[validate(email)]
     pub receiver_address: String,
 
-    #[serde(default = "default_sender_address")]
     #[validate(email)]
     pub sender_address: String,
 
@@ -30,10 +29,6 @@ pub struct Email {
 
 fn default_smtp_port() -> u16 {
     587
-}
-
-fn default_sender_address() -> String {
-    "noreply@chatterbox.local".to_string()
 }
 
 fn default_sender_name() -> String {
