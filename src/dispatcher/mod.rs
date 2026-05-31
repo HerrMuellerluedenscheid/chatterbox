@@ -1,12 +1,14 @@
 pub mod discord;
 pub mod email;
 pub mod gotify;
+pub mod resend;
 pub mod slack;
 pub mod telegram;
 
 use discord::Discord;
 use email::Email;
 use gotify::Gotify;
+use resend::Resend;
 use slack::Slack;
 use telegram::Telegram;
 
@@ -53,6 +55,9 @@ pub struct Sender {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub gotify: Option<Gotify>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub resend: Option<Resend>,
 }
 
 impl Example for Sender {
@@ -63,6 +68,7 @@ impl Example for Sender {
             slack: Some(Slack::example()),
             discord: Some(Discord::example()),
             gotify: Some(Gotify::example()),
+            resend: Some(Resend::example()),
         }
     }
 }
@@ -74,6 +80,7 @@ impl Sender {
         setup_handler!(self.slack, tx);
         setup_handler!(self.discord, tx);
         setup_handler!(self.gotify, tx);
+        setup_handler!(self.resend, tx);
         Ok(())
     }
 }
