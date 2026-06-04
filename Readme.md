@@ -9,6 +9,7 @@ Streamlined notifications via:
  * Slack
  * Discord (bot token, or incoming webhook)
  * Gotify
+ * Microsoft Teams
 
 A simple message consists only of a title and a body, which provides a common
 interface for all notification channels.

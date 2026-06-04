@@ -4,6 +4,7 @@ pub mod email;
 pub mod gotify;
 pub mod resend;
 pub mod slack;
+pub mod teams;
 pub mod telegram;
 
 use discord::Discord;
@@ -12,6 +13,7 @@ use email::Email;
 use gotify::Gotify;
 use resend::Resend;
 use slack::Slack;
+use teams::Teams;
 use telegram::Telegram;
 
 use log::debug;
@@ -59,6 +61,9 @@ pub struct Sender {
     pub discord_webhook: Option<DiscordWebhook>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub teams: Option<Teams>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub gotify: Option<Gotify>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -73,6 +78,7 @@ impl Example for Sender {
             slack: Some(Slack::example()),
             discord: Some(Discord::example()),
             discord_webhook: Some(DiscordWebhook::example()),
+            teams: Some(Teams::example()),
             gotify: Some(Gotify::example()),
             resend: Some(Resend::example()),
         }
@@ -86,6 +92,7 @@ impl Sender {
         setup_handler!(self.slack, tx);
         setup_handler!(self.discord, tx);
         setup_handler!(self.discord_webhook, tx);
+        setup_handler!(self.teams, tx);
         setup_handler!(self.gotify, tx);
         setup_handler!(self.resend, tx);
         Ok(())
