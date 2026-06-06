@@ -78,6 +78,10 @@ pub async fn send_message(
 ) -> Result<(), Box<dyn std::error::Error>> {
     let from = format!("{}<{}>", sender_name, sender_address);
 
+    // Anchor every message about the same subject to one synthetic root id so
+    // the recipient's client threads them into a single conversation.
+    let thread_id = message.thread_message_id();
+
     let html_part = SinglePart::builder()
         .header(ContentType::TEXT_HTML)
         .body(message.html());
@@ -90,7 +94,9 @@ pub async fn send_message(
         .from(from.parse()?)
         .reply_to(sender_address.parse()?)
         .to(receiver_address.parse().unwrap())
-        .subject(message.title.clone())
+        .subject(message.subject_line())
+        .references(thread_id.clone())
+        .in_reply_to(thread_id)
         .multipart(
             MultiPart::alternative()
                 .singlepart(plain_part)

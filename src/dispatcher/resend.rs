@@ -57,6 +57,19 @@ struct ResendPayload<'a> {
     subject: &'a str,
     html: String,
     text: String,
+    headers: ResendHeaders,
+}
+
+/// Custom SMTP headers Resend forwards verbatim. Anchoring `References` /
+/// `In-Reply-To` to a subject-derived id makes the recipient's client thread
+/// notifications that share a subject into one conversation, mirroring the SMTP
+/// [`Email`](crate::dispatcher::email::Email) dispatcher.
+#[derive(Serialize)]
+struct ResendHeaders {
+    #[serde(rename = "References")]
+    references: String,
+    #[serde(rename = "In-Reply-To")]
+    in_reply_to: String,
 }
 
 /// Send an email through the Resend API.
@@ -72,12 +85,17 @@ pub async fn send_message(
 ) -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::Client::new();
 
+    let thread_id = message.thread_message_id();
     let payload = ResendPayload {
         from,
         to: [to],
-        subject: &message.title,
+        subject: message.subject_line(),
         html: message.html(),
         text: message.markdown(),
+        headers: ResendHeaders {
+            references: thread_id.clone(),
+            in_reply_to: thread_id,
+        },
     };
 
     let response = client
