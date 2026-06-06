@@ -10,6 +10,10 @@ Streamlined notifications via:
  * Discord (bot token, or incoming webhook)
  * Gotify
  * Microsoft Teams
+ * ntfy
+ * Pushover
+ * Matrix
+ * Generic webhook (POST the message as JSON to any URL)
 
 A simple message consists only of a title and a body, which provides a common
 interface for all notification channels.
@@ -119,3 +123,22 @@ Two Discord transports are available:
    target channel is fixed when the webhook is created. `username` and
    `avatar_url` optionally override the webhook's default identity per message.
    This is the simplest way to push notifications into a channel.
+
+### Self-hosted and generic transports
+
+ * **`ntfy::Ntfy`** — publishes to an [ntfy](https://ntfy.sh) topic on the
+   public service or your own server (`server_url` + `topic`). `access_token`
+   is only needed for protected/reserved topics. The sibling of Gotify for
+   simple pub/sub push.
+ * **`pushover::Pushover`** — fans a message out to all of a user's devices via
+   [Pushover](https://pushover.net). Needs an application `token` and the
+   recipient `user` (or group) key; `device` optionally narrows it to one
+   device.
+ * **`matrix::Matrix`** — sends an `m.room.message` to a single room on any
+   Matrix homeserver (`homeserver_url` + `room_id`) using a long-lived
+   `access_token`. Open, federated and self-hostable; the message is sent with
+   HTML formatting so titles render in bold.
+ * **`webhook::Webhook`** — the escape hatch: POSTs the `Message` as JSON
+   (`{"title","body","subject"}`) to any `url`, with optional `headers` for
+   auth. Use it to reach automation platforms (Zapier, n8n, Make, IFTTT) or any
+   custom endpoint without a dedicated transport.
