@@ -13,6 +13,9 @@ Streamlined notifications via:
  * ntfy
  * Pushover
  * Matrix
+ * Mattermost
+ * Rocket.Chat
+ * Google Chat
  * Generic webhook (POST the message as JSON to any URL)
 
 A simple message consists only of a title and a body, which provides a common
@@ -123,6 +126,22 @@ Two Discord transports are available:
    target channel is fixed when the webhook is created. `username` and
    `avatar_url` optionally override the webhook's default identity per message.
    This is the simplest way to push notifications into a channel.
+
+### Team-chat webhooks
+
+These all post to an incoming webhook URL created in the target app — no bot,
+no app registration, the channel/space is fixed when the webhook is made.
+
+ * **`mattermost::Mattermost`** — posts a Slack-compatible payload to a
+   [Mattermost](https://mattermost.com) incoming webhook. `channel` and
+   `username` optionally override the webhook defaults (channel override must be
+   enabled on the webhook).
+ * **`rocketchat::RocketChat`** — posts a Slack-compatible payload to a
+   [Rocket.Chat](https://rocket.chat) incoming webhook. `channel` and `alias`
+   optionally override the webhook defaults.
+ * **`google_chat::GoogleChat`** — posts to a [Google Chat](https://chat.google.com)
+   space's incoming webhook (`webhook_url` carries the space id plus a
+   `key`/`token` pair). Uses Google Chat's `*bold*` formatting for the title.
 
 ### Self-hosted and generic transports
 

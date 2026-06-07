@@ -1,8 +1,8 @@
  [package]
 name = "chatterbox"
-version = "2.8.0"
+version = "2.9.0"
 edition = "2021"
-description = "streamlined text notifications via telegram, email, slack, discord, teams, gotify, resend, ntfy, pushover, matrix and generic webhooks"
+description = "streamlined text notifications via telegram, email, slack, discord, teams, gotify, resend, ntfy, pushover, matrix, mattermost, rocket.chat, google chat and generic webhooks"
 license = "MIT"
 repository = "https://github.com/HerrMuellerluedenscheid/chatterbox.git"
 

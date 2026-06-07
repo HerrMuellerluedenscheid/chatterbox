@@ -1,11 +1,14 @@
 pub mod discord;
 pub mod discord_webhook;
 pub mod email;
+pub mod google_chat;
 pub mod gotify;
 pub mod matrix;
+pub mod mattermost;
 pub mod ntfy;
 pub mod pushover;
 pub mod resend;
+pub mod rocketchat;
 pub mod slack;
 pub mod teams;
 pub mod telegram;
@@ -14,11 +17,14 @@ pub mod webhook;
 use discord::Discord;
 use discord_webhook::DiscordWebhook;
 use email::Email;
+use google_chat::GoogleChat;
 use gotify::Gotify;
 use matrix::Matrix;
+use mattermost::Mattermost;
 use ntfy::Ntfy;
 use pushover::Pushover;
 use resend::Resend;
+use rocketchat::RocketChat;
 use slack::Slack;
 use teams::Teams;
 use telegram::Telegram;
@@ -87,6 +93,15 @@ pub struct Sender {
     pub matrix: Option<Matrix>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub mattermost: Option<Mattermost>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub rocketchat: Option<RocketChat>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub google_chat: Option<GoogleChat>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub webhook: Option<Webhook>,
 }
 
@@ -104,6 +119,9 @@ impl Example for Sender {
             ntfy: Some(Ntfy::example()),
             pushover: Some(Pushover::example()),
             matrix: Some(Matrix::example()),
+            mattermost: Some(Mattermost::example()),
+            rocketchat: Some(RocketChat::example()),
+            google_chat: Some(GoogleChat::example()),
             webhook: Some(Webhook::example()),
         }
     }
@@ -122,6 +140,9 @@ impl Sender {
         setup_handler!(self.ntfy, tx);
         setup_handler!(self.pushover, tx);
         setup_handler!(self.matrix, tx);
+        setup_handler!(self.mattermost, tx);
+        setup_handler!(self.rocketchat, tx);
+        setup_handler!(self.google_chat, tx);
         setup_handler!(self.webhook, tx);
         Ok(())
     }
