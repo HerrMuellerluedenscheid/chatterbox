@@ -14,6 +14,9 @@ use validator::Validate;
 /// delivered as the integration/app that owns the webhook. The target channel
 /// is fixed when the webhook is created in the Discord UI.
 ///
+/// The message is sent as plain `content` (not an embed) so Discord renders the
+/// full Markdown set, including headers. See [`render_content`].
+///
 /// `username` and `avatar_url` are optional per-message overrides Discord
 /// applies to the webhook's default identity.
 ///
@@ -58,25 +61,35 @@ impl Handler for DiscordWebhook {
 }
 
 #[derive(Serialize)]
-struct WebhookEmbed<'a> {
-    title: &'a str,
-    description: &'a str,
-}
-
-#[derive(Serialize)]
 struct WebhookPayload<'a> {
-    embeds: [WebhookEmbed<'a>; 1],
+    content: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     username: Option<&'a str>,
     #[serde(skip_serializing_if = "Option::is_none")]
     avatar_url: Option<&'a str>,
 }
 
+/// Render a [`Message`] as Discord message content (Markdown).
+///
+/// We POST the message as plain webhook `content` rather than an embed: only
+/// regular message content renders Discord's full Markdown, including headers
+/// (`# `, `## `). Embed `description`/field values support a narrower subset
+/// and drop header syntax, printing it literally. The title becomes a level-1
+/// header — note the space after `#`, which Discord requires or it treats the
+/// `#` as a (failed) channel mention.
+fn render_content(message: &Message) -> String {
+    match (message.title.is_empty(), message.body.is_empty()) {
+        (true, _) => message.body.clone(),
+        (false, true) => format!("# {}", message.title),
+        (false, false) => format!("# {}\n{}", message.title, message.body),
+    }
+}
+
 /// Execute a Discord webhook.
 ///
 /// See <https://discord.com/developers/docs/resources/webhook#execute-webhook>.
 /// Returns the upstream status and body on a non-2xx response so callers can
-/// surface a useful error (revoked/unknown webhook, malformed embed, …).
+/// surface a useful error (revoked/unknown webhook, content too long, …).
 pub async fn send_message(
     webhook_url: &str,
     username: Option<&str>,
@@ -86,10 +99,7 @@ pub async fn send_message(
     let client = reqwest::Client::new();
 
     let payload = WebhookPayload {
-        embeds: [WebhookEmbed {
-            title: &message.title,
-            description: &message.body,
-        }],
+        content: render_content(&message),
         username,
         avatar_url,
     };
@@ -140,6 +150,22 @@ mod tests {
     #[test]
     fn test_example() {
         DiscordWebhook::example();
+    }
+
+    #[test]
+    fn render_content_renders_title_as_header() {
+        // Space after `#` is required for Discord to render a header.
+        let m = Message::new("Heads up".into(), "the body".into());
+        assert_eq!(render_content(&m), "# Heads up\nthe body");
+    }
+
+    #[test]
+    fn render_content_omits_empty_parts() {
+        let title_only = Message::new("Heads up".into(), String::new());
+        assert_eq!(render_content(&title_only), "# Heads up");
+
+        let body_only = Message::new(String::new(), "just a body".into());
+        assert_eq!(render_content(&body_only), "just a body");
     }
 
     #[tokio::test]
